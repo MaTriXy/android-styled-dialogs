@@ -21,7 +21,7 @@ import android.view.View;
 
 import com.avast.android.dialogs.core.BaseDialogFragment;
 import com.avast.android.dialogs.fragment.SimpleDialogFragment;
-import com.avast.android.dialogs.iface.ISimpleDialogListener;
+import com.avast.android.dialogs.iface.IPositiveButtonDialogListener;
 
 /**
  * Sample implementation of custom dialog by extending {@link SimpleDialogFragment}.
@@ -43,10 +43,9 @@ public class JayneHatDialogFragment extends SimpleDialogFragment {
 		builder.setPositiveButton("I want one", new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				ISimpleDialogListener listener = getDialogListener();
-				if (listener != null) {
-					listener.onPositiveButtonClicked(0);
-				}
+				for (IPositiveButtonDialogListener listener : getPositiveButtonDialogListeners()) {
+                    listener.onPositiveButtonClicked(mRequestCode);
+                }
 				dismiss();
 			}
 		});

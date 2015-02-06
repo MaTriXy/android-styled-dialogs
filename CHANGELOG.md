@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.1.0
+
+February 2, 2015
+
+ - new multi-choice and single-choice modes for ListDialogFragment
+ - listeners called for both activity and fragment
+ - cancel listener made more general
+ - broke ISimpleDialogListener into separated button listeners
+ - TimePickerDialog fragment has correct default timezone and 24-hour view
+ - Custom view is no longer wrapped in ScrollView
+
 ## 2.0.1
 
 January 8, 2015

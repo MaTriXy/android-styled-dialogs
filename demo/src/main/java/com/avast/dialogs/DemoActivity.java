@@ -22,21 +22,26 @@ import java.util.Date;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.Toast;
 
 import com.avast.android.dialogs.fragment.*;
-import com.avast.android.dialogs.iface.IDateDialogListener;
-import com.avast.android.dialogs.iface.IListDialogListener;
-import com.avast.android.dialogs.iface.ISimpleDialogCancelListener;
-import com.avast.android.dialogs.iface.ISimpleDialogListener;
+import com.avast.android.dialogs.iface.*;
 
 public class DemoActivity extends ActionBarActivity implements
     ISimpleDialogListener,
     IDateDialogListener,
     ISimpleDialogCancelListener,
-    IListDialogListener {
+    IListDialogListener,
+    IMultiChoiceListDialogListener {
 
     private static final int REQUEST_PROGRESS = 1;
+    private static final int REQUEST_LIST_SIMPLE = 9;
+    private static final int REQUEST_LIST_MULTIPLE = 10;
+    private static final int REQUEST_LIST_SINGLE = 11;
+    private static final int REQUEST_DATE_PICKER = 12;
+    private static final int REQUEST_TIME_PICKER = 13;
+    private static final int REQUEST_SIMPLE_DIALOG = 42;
 
     DemoActivity c = this;
 
@@ -78,7 +83,9 @@ public class DemoActivity extends ActionBarActivity implements
                         .setTitle("Do you like this quote?")
                         .setMessage("Jayne: \"Shiny. Let's be bad guys.\"")
                         .setPositiveButtonText("Love")
-                        .setNegativeButtonText("Hate").setNeutralButtonText("WTF?").setRequestCode(42)
+                        .setNegativeButtonText("Hate")
+                        .setNeutralButtonText("WTF?")
+                        .setRequestCode(REQUEST_SIMPLE_DIALOG)
                         .show();
                 }
             });
@@ -99,7 +106,7 @@ public class DemoActivity extends ActionBarActivity implements
                     .show();
             }
         });
-        findViewById(R.id.list_dialog).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.list_dialog_simple).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ListDialogFragment
@@ -107,7 +114,36 @@ public class DemoActivity extends ActionBarActivity implements
                     .setTitle("Your favorite character:")
                     .setItems(new String[]{"Jayne", "Malcolm", "Kaylee",
                         "Wash", "Zoe", "River"})
-                    .setRequestCode(11)
+                    .setRequestCode(REQUEST_LIST_SIMPLE)
+                    .show();
+
+            }
+        });
+        findViewById(R.id.list_dialog_single).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ListDialogFragment
+                    .createBuilder(c, getSupportFragmentManager())
+                    .setTitle("Your favorite character:")
+                    .setItems(new String[]{"Jayne", "Malcolm", "Kaylee",
+                        "Wash", "Zoe", "River"})
+                    .setRequestCode(REQUEST_LIST_SINGLE)
+                    .setChoiceMode(AbsListView.CHOICE_MODE_SINGLE)
+                    .show();
+
+            }
+        });
+        findViewById(R.id.list_dialog_multiple).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ListDialogFragment
+                    .createBuilder(c, getSupportFragmentManager())
+                    .setTitle("Your favorite character:")
+                    .setItems(new String[]{"Jayne", "Malcolm", "Kaylee",
+                        "Wash", "Zoe", "River"})
+                    .setRequestCode(REQUEST_LIST_MULTIPLE)
+                    .setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE)
+                    .setCheckedItems(new int[]{1, 3})
                     .show();
 
             }
@@ -124,10 +160,9 @@ public class DemoActivity extends ActionBarActivity implements
                 TimePickerDialogFragment
                     .createBuilder(DemoActivity.this, getSupportFragmentManager())
                     .setDate(new Date())
-                    .set24hour(true)
                     .setPositiveButtonText(android.R.string.ok)
                     .setNegativeButtonText(android.R.string.cancel)
-                    .setRequestCode(13)
+                    .setRequestCode(REQUEST_TIME_PICKER)
                     .show();
             }
         });
@@ -137,10 +172,9 @@ public class DemoActivity extends ActionBarActivity implements
                 DatePickerDialogFragment
                     .createBuilder(DemoActivity.this, getSupportFragmentManager())
                     .setDate(new Date())
-                    .set24hour(true)
                     .setPositiveButtonText(android.R.string.ok)
                     .setNegativeButtonText(android.R.string.cancel)
-                    .setRequestCode(12)
+                    .setRequestCode(REQUEST_DATE_PICKER)
                     .show();
             }
         });
@@ -150,8 +184,23 @@ public class DemoActivity extends ActionBarActivity implements
 
     @Override
     public void onListItemSelected(String value, int number, int requestCode) {
-        if (requestCode == 11) {
+        if (requestCode == REQUEST_LIST_SIMPLE || requestCode == REQUEST_LIST_SINGLE) {
             Toast.makeText(c, "Selected: " + value, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onListItemsSelected(String[] values, int[] selectedPositions, int requestCode) {
+        if (requestCode == REQUEST_LIST_MULTIPLE) {
+            StringBuilder sb = new StringBuilder();
+            for (String value : values) {
+                if (sb.length() > 0) {
+                    sb.append(", ");
+                }
+                sb.append(value);
+
+            }
+            Toast.makeText(c, "Selected: " + sb.toString(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -159,34 +208,46 @@ public class DemoActivity extends ActionBarActivity implements
 
     @Override
     public void onCancelled(int requestCode) {
-        if (requestCode == 42) {
-            Toast.makeText(c, "Dialog cancelled", Toast.LENGTH_SHORT).show();
-        } else if (requestCode == REQUEST_PROGRESS) {
-            Toast.makeText(c, "Progress dialog cancelled", Toast.LENGTH_SHORT).show();
-        } else if (requestCode == 11) {
-            Toast.makeText(c, "Nothing selected", Toast.LENGTH_SHORT).show();
-        }
+        switch (requestCode) {
+            case REQUEST_SIMPLE_DIALOG:
+                Toast.makeText(c, "Dialog cancelled", Toast.LENGTH_SHORT).show();
+                break;
+            case REQUEST_PROGRESS:
+                Toast.makeText(c, "Progress dialog cancelled", Toast.LENGTH_SHORT).show();
+                break;
+            case REQUEST_LIST_SIMPLE:
+            case REQUEST_LIST_SINGLE:
+            case REQUEST_LIST_MULTIPLE:
+                Toast.makeText(c, "Nothing selected", Toast.LENGTH_SHORT).show();
+                break;
+            case REQUEST_DATE_PICKER:
+                Toast.makeText(c, "Date picker cancelled", Toast.LENGTH_SHORT).show();
+                break;
+            case REQUEST_TIME_PICKER:
+                Toast.makeText(c, "Time picker cancelled", Toast.LENGTH_SHORT).show();
+                break;
+        } 
     }
 
     // ISimpleDialogListener
 
     @Override
     public void onPositiveButtonClicked(int requestCode) {
-        if (requestCode == 42) {
+        if (requestCode == REQUEST_SIMPLE_DIALOG) {
             Toast.makeText(c, "Positive button clicked", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onNegativeButtonClicked(int requestCode) {
-        if (requestCode == 42) {
+        if (requestCode == REQUEST_SIMPLE_DIALOG) {
             Toast.makeText(c, "Negative button clicked", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onNeutralButtonClicked(int requestCode) {
-        if (requestCode == 42) {
+        if (requestCode == REQUEST_SIMPLE_DIALOG) {
             Toast.makeText(c, "Neutral button clicked", Toast.LENGTH_SHORT).show();
         }
     }
@@ -196,9 +257,9 @@ public class DemoActivity extends ActionBarActivity implements
     @Override
     public void onNegativeButtonClicked(int resultCode, Date date) {
         String text = "";
-        if (resultCode == 12) {
+        if (resultCode == REQUEST_DATE_PICKER) {
             text = "Date ";
-        } else if (resultCode == 13) {
+        } else if (resultCode == REQUEST_TIME_PICKER) {
             text = "Time ";
         }
 
@@ -209,9 +270,9 @@ public class DemoActivity extends ActionBarActivity implements
     @Override
     public void onPositiveButtonClicked(int resultCode, Date date) {
         String text = "";
-        if (resultCode == 12) {
+        if (resultCode == REQUEST_DATE_PICKER) {
             text = "Date ";
-        } else if (resultCode == 13) {
+        } else if (resultCode == REQUEST_TIME_PICKER) {
             text = "Time ";
         }
 
