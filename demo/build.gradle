@@ -1,14 +1,30 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "20"
+    compileSdkVersion 22
+    buildToolsVersion "22"
 
     defaultConfig {
         minSdkVersion 8
-        targetSdkVersion 21
+        targetSdkVersion 22
         versionName project.VERSION_NAME
         versionCode project.VERSION_CODE
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(AVAST_LABS_KEYSTORE_FILE)
+            storePassword AVAST_LABS_KEYSTORE_PASSWORD
+            keyAlias AVAST_LABS_KEY_ALIAS
+            keyPassword AVAST_LABS_KEY_PASSWORD
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
     }
 }
 

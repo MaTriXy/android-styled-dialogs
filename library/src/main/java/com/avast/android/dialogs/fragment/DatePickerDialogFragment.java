@@ -1,10 +1,5 @@
 package com.avast.android.dialogs.fragment;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -18,6 +13,11 @@ import com.avast.android.dialogs.R;
 import com.avast.android.dialogs.core.BaseDialogBuilder;
 import com.avast.android.dialogs.core.BaseDialogFragment;
 import com.avast.android.dialogs.iface.IDateDialogListener;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Dialog with a date picker.
@@ -55,12 +55,12 @@ public class DatePickerDialogFragment extends BaseDialogFragment {
 
     @Override
     protected BaseDialogFragment.Builder build(BaseDialogFragment.Builder builder) {
-        final String title = getTitle();
+        final CharSequence title = getTitle();
         if (!TextUtils.isEmpty(title)) {
             builder.setTitle(title);
         }
 
-        final String positiveButtonText = getPositiveButtonText();
+        final CharSequence positiveButtonText = getPositiveButtonText();
         if (!TextUtils.isEmpty(positiveButtonText)) {
             builder.setPositiveButton(positiveButtonText, new View.OnClickListener() {
 
@@ -74,7 +74,7 @@ public class DatePickerDialogFragment extends BaseDialogFragment {
             });
         }
 
-        final String negativeButtonText = getNegativeButtonText();
+        final CharSequence negativeButtonText = getNegativeButtonText();
         if (!TextUtils.isEmpty(negativeButtonText)) {
             builder.setNegativeButton(negativeButtonText, new View.OnClickListener() {
 
@@ -87,28 +87,28 @@ public class DatePickerDialogFragment extends BaseDialogFragment {
                 }
             });
         }
-        mDatePicker = (DatePicker)LayoutInflater.from(getActivity()).inflate(R.layout.sdl_datepicker, null);
+        mDatePicker = (DatePicker) LayoutInflater.from(getActivity()).inflate(R.layout.sdl_datepicker, null);
         builder.setView(mDatePicker);
 
         TimeZone zone = TimeZone.getTimeZone(getArguments().getString(ARG_ZONE));
         mCalendar = Calendar.getInstance(zone);
         mCalendar.setTimeInMillis(getArguments().getLong(ARG_DATE, System.currentTimeMillis()));
         mDatePicker.updateDate(mCalendar.get(Calendar.YEAR)
-            , mCalendar.get(Calendar.MONTH)
-            , mCalendar.get(Calendar.DAY_OF_MONTH));
+                , mCalendar.get(Calendar.MONTH)
+                , mCalendar.get(Calendar.DAY_OF_MONTH));
         return builder;
     }
 
-    protected String getTitle() {
-        return getArguments().getString(ARG_TITLE);
+    protected CharSequence getTitle() {
+        return getArguments().getCharSequence(ARG_TITLE);
     }
 
-    protected String getPositiveButtonText() {
-        return getArguments().getString(ARG_POSITIVE_BUTTON);
+    protected CharSequence getPositiveButtonText() {
+        return getArguments().getCharSequence(ARG_POSITIVE_BUTTON);
     }
 
-    protected String getNegativeButtonText() {
-        return getArguments().getString(ARG_NEGATIVE_BUTTON);
+    protected CharSequence getNegativeButtonText() {
+        return getArguments().getCharSequence(ARG_NEGATIVE_BUTTON);
     }
 
     public Date getDate() {
@@ -122,9 +122,9 @@ public class DatePickerDialogFragment extends BaseDialogFragment {
         Date mDate = new Date();
         String mTimeZone = null;
 
-        private String mTitle;
-        private String mPositiveButtonText;
-        private String mNegativeButtonText;
+        private CharSequence mTitle;
+        private CharSequence mPositiveButtonText;
+        private CharSequence mNegativeButtonText;
 
         private boolean mShowDefaultButton = true;
         private boolean m24h;
@@ -140,7 +140,7 @@ public class DatePickerDialogFragment extends BaseDialogFragment {
         }
 
 
-        public SimpleDialogBuilder setTitle(String title) {
+        public SimpleDialogBuilder setTitle(CharSequence title) {
             mTitle = title;
             return this;
         }
@@ -150,7 +150,7 @@ public class DatePickerDialogFragment extends BaseDialogFragment {
             return this;
         }
 
-        public SimpleDialogBuilder setPositiveButtonText(String text) {
+        public SimpleDialogBuilder setPositiveButtonText(CharSequence text) {
             mPositiveButtonText = text;
             return this;
         }
@@ -160,7 +160,7 @@ public class DatePickerDialogFragment extends BaseDialogFragment {
             return this;
         }
 
-        public SimpleDialogBuilder setNegativeButtonText(String text) {
+        public SimpleDialogBuilder setNegativeButtonText(CharSequence text) {
             mNegativeButtonText = text;
             return this;
         }
@@ -183,9 +183,9 @@ public class DatePickerDialogFragment extends BaseDialogFragment {
         @Override
         protected Bundle prepareArguments() {
             Bundle args = new Bundle();
-            args.putString(SimpleDialogFragment.ARG_TITLE, mTitle);
-            args.putString(SimpleDialogFragment.ARG_POSITIVE_BUTTON, mPositiveButtonText);
-            args.putString(SimpleDialogFragment.ARG_NEGATIVE_BUTTON, mNegativeButtonText);
+            args.putCharSequence(SimpleDialogFragment.ARG_TITLE, mTitle);
+            args.putCharSequence(SimpleDialogFragment.ARG_POSITIVE_BUTTON, mPositiveButtonText);
+            args.putCharSequence(SimpleDialogFragment.ARG_NEGATIVE_BUTTON, mNegativeButtonText);
 
             args.putLong(ARG_DATE, mDate.getTime());
             args.putBoolean(ARG_24H, m24h);
