@@ -1,22 +1,24 @@
 buildscript {
     repositories {
+        google()
         jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.android.tools.build:gradle:3.4.1'
     }
 }
 
 allprojects {
     repositories {
+        google()
         jcenter()
     }
 }
 
 ext {
-    VERSION_NAME = "2.2.1-SNAPSHOT"
-    VERSION_CODE = 10
+    VERSION_NAME = "2.3.4-SNAPSHOT"
+    VERSION_CODE = 14
 }
 
 apply plugin: 'android-reporting'

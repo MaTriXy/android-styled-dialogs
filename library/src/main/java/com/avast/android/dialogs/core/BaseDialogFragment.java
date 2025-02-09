@@ -16,17 +16,16 @@
 
 package com.avast.android.dialogs.core;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -42,13 +41,16 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.StyleRes;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.avast.android.dialogs.R;
 import com.avast.android.dialogs.iface.ISimpleDialogCancelListener;
 import com.avast.android.dialogs.util.TypefaceHelper;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Base dialog fragment for all your dialogs, styleable and same design on Android 2.2+.
@@ -57,37 +59,15 @@ import java.util.List;
  */
 public abstract class BaseDialogFragment extends DialogFragment implements DialogInterface.OnShowListener {
 
-    //True then use dark theme , else by default make use of light theme
-    private static boolean darkTheme;
     protected int mRequestCode;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        int theme = resolveTheme();
+        Dialog dialog = new Dialog(getActivity(), theme);
 
         Bundle args = getArguments();
-
-        if (args != null) {
-
-            if (args.getBoolean(BaseDialogBuilder.ARG_USE_DARK_THEME)) {
-                //Developer is explicitly using the dark theme
-                darkTheme = true;
-            } else if (args.getBoolean(BaseDialogBuilder.ARG_USE_LIGHT_THEME)) {
-                //Developer is explicitly using the light theme
-                darkTheme = false;
-            } else {
-                //Dynamically detecting the theme declared in manifest
-                resolveTheme();
-            }
-
-        } else {
-
-            //Dynamically detecting the theme declared in manifest
-            resolveTheme();
-        }
-
-        Dialog dialog = new Dialog(getActivity(), darkTheme ? R.style.SDL_Dialog_Dark : R.style.SDL_Dialog);
-
         if (args != null) {
             dialog.setCanceledOnTouchOutside(
                     args.getBoolean(BaseDialogBuilder.ARG_CANCELABLE_ON_TOUCH_OUTSIDE));
@@ -233,9 +213,40 @@ public abstract class BaseDialogFragment extends DialogFragment implements Dialo
     }
 
     /**
+     * Resolves the theme to be used for the dialog.
+     *
+     * @return The theme.
+     */
+    @StyleRes
+    private int resolveTheme() {
+        // First check if getTheme() returns some usable theme.
+        int theme = getTheme();
+        if (theme != 0) {
+            return theme;
+        }
+
+        // Get the light/dark attribute from the Activity's Theme.
+        boolean useLightTheme = isActivityThemeLight();
+
+        // Now check if developer overrides the Activity's Theme with an argument.
+        Bundle args = getArguments();
+        if (args != null) {
+            if (args.getBoolean(BaseDialogBuilder.ARG_USE_DARK_THEME)) {
+                // Developer is explicitly using the dark theme.
+                useLightTheme = false;
+            } else if (args.getBoolean(BaseDialogBuilder.ARG_USE_LIGHT_THEME)) {
+                // Developer is explicitly using the light theme.
+                useLightTheme = true;
+            }
+        }
+
+        return useLightTheme ? R.style.SDL_Dialog : R.style.SDL_Dark_Dialog;
+    }
+
+    /**
      * This method resolves the current theme declared in the manifest
      */
-    private void resolveTheme() {
+    private boolean isActivityThemeLight() {
         try {
             TypedValue val = new TypedValue();
 
@@ -243,12 +254,15 @@ public abstract class BaseDialogFragment extends DialogFragment implements Dialo
             getActivity().getTheme().resolveAttribute(R.attr.isLightTheme, val, true);
 
             //Passing the resource ID to TypedArray to get the attribute value
-            TypedArray arr = getActivity().obtainStyledAttributes(val.data, new int[]{R.attr.isLightTheme});
-            darkTheme = !arr.getBoolean(0, false);
-            arr.recycle();
+            TypedArray styledAttributes =
+                    getActivity().obtainStyledAttributes(val.data, new int[]{R.attr.isLightTheme});
+            boolean lightTheme = styledAttributes.getBoolean(0, false);
+            styledAttributes.recycle();
+
+            return lightTheme;
         } catch (RuntimeException e) {
             //Resource not found , so sticking to light theme
-            darkTheme = false;
+            return true;
         }
     }
 

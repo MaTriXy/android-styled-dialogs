@@ -1,23 +1,25 @@
 package com.avast.android.dialogs.fragment;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
+
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
+
+import androidx.fragment.app.FragmentManager;
 
 import com.avast.android.dialogs.R;
 import com.avast.android.dialogs.core.BaseDialogBuilder;
 import com.avast.android.dialogs.core.BaseDialogFragment;
 import com.avast.android.dialogs.iface.IDateDialogListener;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+
 
 /**
  * Dialog with a date picker.
@@ -87,7 +89,7 @@ public class DatePickerDialogFragment extends BaseDialogFragment {
                 }
             });
         }
-        mDatePicker = (DatePicker) LayoutInflater.from(getActivity()).inflate(R.layout.sdl_datepicker, null);
+        mDatePicker = (DatePicker) builder.getLayoutInflater().inflate(R.layout.sdl_datepicker, null);
         builder.setView(mDatePicker);
 
         TimeZone zone = TimeZone.getTimeZone(getArguments().getString(ARG_ZONE));

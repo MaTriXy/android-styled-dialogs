@@ -22,7 +22,6 @@ import java.util.Date;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.content.res.TypedArray;
 import android.util.TypedValue;
@@ -31,6 +30,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.avast.android.dialogs.fragment.DatePickerDialogFragment;
 import com.avast.android.dialogs.fragment.ListDialogFragment;
@@ -43,7 +44,7 @@ import com.avast.android.dialogs.iface.IMultiChoiceListDialogListener;
 import com.avast.android.dialogs.iface.ISimpleDialogCancelListener;
 import com.avast.android.dialogs.iface.ISimpleDialogListener;
 
-public class DemoActivity extends ActionBarActivity implements
+public class DemoActivity extends AppCompatActivity implements
         ISimpleDialogListener,
         IDateDialogListener,
         ISimpleDialogCancelListener,
@@ -326,7 +327,7 @@ public class DemoActivity extends ActionBarActivity implements
                     setTheme(R.style.AppThemeDark);
                     Toast.makeText(DemoActivity.this, "Dark theme set", Toast.LENGTH_SHORT).show();
                 }
-                invalidateOptionsMenu();
+                supportInvalidateOptionsMenu();
                 return true;
             case R.id.about:
                 Intent i = new Intent(Intent.ACTION_VIEW);

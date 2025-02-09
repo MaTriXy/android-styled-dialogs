@@ -7,19 +7,22 @@ ext {
 }
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22"
+    compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 22
+        minSdkVersion 14
+        targetSdkVersion 28
         versionName project.VERSION_NAME
         versionCode project.VERSION_CODE
+    }
+
+    lintOptions {
+        abortOnError false
     }
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:22.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
 }
 
 apply from: 'android-release-aar.gradle'

@@ -15,9 +15,10 @@
  */
 package com.avast.dialogs;
 
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import androidx.fragment.app.FragmentActivity;
 
 import com.avast.android.dialogs.core.BaseDialogFragment;
 import com.avast.android.dialogs.fragment.SimpleDialogFragment;
@@ -37,8 +38,14 @@ public class JayneHatDialogFragment extends SimpleDialogFragment {
     }
 
     @Override
+    public int getTheme() {
+        return R.style.JayneHatDialogTheme;
+    }
+
+    @Override
     public BaseDialogFragment.Builder build(BaseDialogFragment.Builder builder) {
         builder.setTitle("Jayne's hat");
+        builder.setMessage("A man walks down the street in that hat, people know he's not afraid of anything.");
         builder.setView(LayoutInflater.from(getActivity()).inflate(R.layout.view_jayne_hat, null));
         builder.setPositiveButton("I want one", new View.OnClickListener() {
             @Override
